@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: crud
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
