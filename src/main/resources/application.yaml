@@ -2,4 +2,7 @@ spring:
   application:
     name: crud
   datasource:
-    url: jdbc:postgresql://localhost:5432/
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+
