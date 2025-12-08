@@ -9,3 +9,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+jwt:
+  secret: your-super-secret-key-that-is-long-enough
+  expiration: 60000 # 1 minute

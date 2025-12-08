@@ -10,16 +10,19 @@ import com.buoya.crud.auth.dto.RegisterUserResponse;
 import com.buoya.crud.common.exceptions.EmailAlreadyExistsException;
 import com.buoya.crud.common.exceptions.InvalidCredentialsException;
 import com.buoya.crud.common.exceptions.UsernameAlreadyExistsException;
+import com.buoya.crud.common.services.JwtService;
 import com.buoya.crud.entities.User;
 import com.buoya.crud.repository.UserRepository;
 
 @Service
 public class AuthService {
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     public User registerNewUser(RegisterRequest dto) {
@@ -49,8 +52,8 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid email/username or password");
         }
 
-        // TODO: Generate JWT token
-        String token = "dummy-token";
+        // Generate JWT token
+        String token = jwtService.generateToken(user);
 
         return new LoginResponse(
                 token,
