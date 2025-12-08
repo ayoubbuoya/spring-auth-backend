@@ -41,8 +41,9 @@ public class AuthController {
 
     @Operation(summary = "Register a new user", description = "Create a new user with the given username, email and password", responses = {
             @ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "409", description = "User already exists", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class)))
 
     })
     @PostMapping("/register")

@@ -4,6 +4,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.buoya.crud.auth.dto.RegisterRequest;
+import com.buoya.crud.common.exceptions.EmailAlreadyExistsException;
+import com.buoya.crud.common.exceptions.UsernameAlreadyExistsException;
 import com.buoya.crud.entities.User;
 import com.buoya.crud.repository.UserRepository;
 
@@ -19,11 +21,11 @@ public class AuthService {
     public User registerNewUser(RegisterRequest dto) {
 
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email is already registered");
+            throw new EmailAlreadyExistsException(dto.getEmail());
         }
 
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new UsernameAlreadyExistsException(dto.getUsername());
         }
 
         User user = User.builder()
