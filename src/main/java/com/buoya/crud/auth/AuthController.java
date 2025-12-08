@@ -1,4 +1,4 @@
-package com.buoya.crud.auth.controller;
+package com.buoya.crud.auth;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.buoya.crud.auth.dto.RegisterRequest;
 import com.buoya.crud.auth.dto.RegisterUserResponse;
-import com.buoya.crud.auth.service.AuthService;
 import com.buoya.crud.common.types.GenericApiResponse;
 import com.buoya.crud.entities.User;
 

@@ -1,4 +1,4 @@
-package com.buoya.crud.auth.service;
+package com.buoya.crud.auth;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
