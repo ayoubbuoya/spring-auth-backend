@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.buoya.crud.common.types.GenericApiResponse;
 
+import io.swagger.v3.oas.models.responses.ApiResponse;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -19,6 +21,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<GenericApiResponse<Void>> handleUsernameExists(UsernameAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new GenericApiResponse<>(ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<GenericApiResponse<Void>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new GenericApiResponse<>(ex.getMessage(), null));
     }
 

@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.buoya.crud.auth.dto.LoginRequest;
+import com.buoya.crud.auth.dto.LoginResponse;
 import com.buoya.crud.auth.dto.RegisterRequest;
 import com.buoya.crud.auth.dto.RegisterUserResponse;
 import com.buoya.crud.common.types.GenericApiResponse;
@@ -60,6 +62,19 @@ public class AuthController {
                 new GenericApiResponse<RegisterUserResponse>(
                         "User registered successfully",
                         registerUserResponse));
+    }
+
+    @Operation(summary = "Login a user", description = "Login a user with the given email or username and password", responses = {
+            @ApiResponse(responseCode = "200", description = "User logged in successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class)))
+    })
+    @PostMapping("/login")
+    public ResponseEntity<GenericApiResponse<LoginResponse>> loginUser(@Valid @RequestBody LoginRequest request) {
+        LoginResponse loginResponse = authService.login(request);
+
+        return ResponseEntity.ok(
+                new GenericApiResponse<>("User logged in successfully", loginResponse));
     }
 
 }

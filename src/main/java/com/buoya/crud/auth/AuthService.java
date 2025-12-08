@@ -3,8 +3,12 @@ package com.buoya.crud.auth;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.buoya.crud.auth.dto.LoginRequest;
+import com.buoya.crud.auth.dto.LoginResponse;
 import com.buoya.crud.auth.dto.RegisterRequest;
+import com.buoya.crud.auth.dto.RegisterUserResponse;
 import com.buoya.crud.common.exceptions.EmailAlreadyExistsException;
+import com.buoya.crud.common.exceptions.InvalidCredentialsException;
 import com.buoya.crud.common.exceptions.UsernameAlreadyExistsException;
 import com.buoya.crud.entities.User;
 import com.buoya.crud.repository.UserRepository;
@@ -35,6 +39,23 @@ public class AuthService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public LoginResponse login(LoginRequest dto) {
+        User user = userRepository.findByEmailOrUsername(dto.getIdentifier())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email/username or password"));
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email/username or password");
+        }
+
+        // TODO: Generate JWT token
+        String token = "dummy-token";
+
+        return new LoginResponse(
+                token,
+                new RegisterUserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole()));
+
     }
 
 }
