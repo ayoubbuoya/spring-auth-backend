@@ -1,7 +1,10 @@
 package com.buoya.crud.auth;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.buoya.crud.auth.dto.LoginRequest;
 import com.buoya.crud.auth.dto.LoginResponse;
@@ -11,8 +14,16 @@ import com.buoya.crud.common.exceptions.EmailAlreadyExistsException;
 import com.buoya.crud.common.exceptions.InvalidCredentialsException;
 import com.buoya.crud.common.exceptions.UsernameAlreadyExistsException;
 import com.buoya.crud.common.services.JwtService;
+import com.buoya.crud.common.types.UserJwt;
 import com.buoya.crud.entities.User;
 import com.buoya.crud.repository.UserRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthService {
@@ -58,7 +69,6 @@ public class AuthService {
         return new LoginResponse(
                 token,
                 new RegisterUserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole()));
-
     }
 
 }

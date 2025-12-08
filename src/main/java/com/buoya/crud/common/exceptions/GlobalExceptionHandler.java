@@ -30,6 +30,12 @@ public class GlobalExceptionHandler {
                 .body(new GenericApiResponse<>(ex.getMessage(), null));
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<GenericApiResponse<Void>> handleInvalidToken(InvalidTokenException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new GenericApiResponse<>(ex.getMessage(), null));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GenericApiResponse<Void>> handleGeneral(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

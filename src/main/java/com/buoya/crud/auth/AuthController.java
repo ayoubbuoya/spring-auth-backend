@@ -7,16 +7,22 @@ import com.buoya.crud.auth.dto.LoginRequest;
 import com.buoya.crud.auth.dto.LoginResponse;
 import com.buoya.crud.auth.dto.RegisterRequest;
 import com.buoya.crud.auth.dto.RegisterUserResponse;
+import com.buoya.crud.common.services.JwtService;
 import com.buoya.crud.common.types.GenericApiResponse;
+import com.buoya.crud.common.types.UserJwt;
 import com.buoya.crud.entities.User;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,52 +34,64 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 public class AuthController {
 
-    private final AuthService authService;
+        private final AuthService authService;
+        private final JwtService jwtService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+        public AuthController(AuthService authService, JwtService jwtService) {
+                this.authService = authService;
+                this.jwtService = jwtService;
+        }
 
-    @GetMapping("/welcome")
-    public String getMethodName() {
-        return new String("Welcome to CRUD WITH JWT AUTH");
-    }
+        @GetMapping("/welcome")
+        public String getMethodName() {
+                return new String("Welcome to CRUD WITH JWT AUTH");
+        }
 
-    @Operation(summary = "Register a new user", description = "Create a new user with the given username, email and password", responses = {
-            @ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
-            @ApiResponse(responseCode = "409", description = "User already exists", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class)))
+        @Operation(summary = "Register a new user", description = "Create a new user with the given username, email and password", responses = {
+                        @ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+                        @ApiResponse(responseCode = "409", description = "User already exists", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class)))
 
-    })
-    @PostMapping("/register")
-    public ResponseEntity<GenericApiResponse<RegisterUserResponse>> registerUser(
-            @Valid @RequestBody RegisterRequest request) {
-        User user = authService.registerNewUser(request);
+        })
+        @PostMapping("/register")
+        public ResponseEntity<GenericApiResponse<RegisterUserResponse>> registerUser(
+                        @Valid @RequestBody RegisterRequest request) {
+                User user = authService.registerNewUser(request);
 
-        RegisterUserResponse registerUserResponse = new RegisterUserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole());
+                RegisterUserResponse registerUserResponse = new RegisterUserResponse(
+                                user.getId(),
+                                user.getUsername(),
+                                user.getEmail(),
+                                user.getRole());
 
-        return ResponseEntity.ok(
-                new GenericApiResponse<RegisterUserResponse>(
-                        "User registered successfully",
-                        registerUserResponse));
-    }
+                return ResponseEntity.ok(
+                                new GenericApiResponse<RegisterUserResponse>(
+                                                "User registered successfully",
+                                                registerUserResponse));
+        }
 
-    @Operation(summary = "Login a user", description = "Login a user with the given email or username and password", responses = {
-            @ApiResponse(responseCode = "200", description = "User logged in successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class)))
-    })
-    @PostMapping("/login")
-    public ResponseEntity<GenericApiResponse<LoginResponse>> loginUser(@Valid @RequestBody LoginRequest request) {
-        LoginResponse loginResponse = authService.login(request);
+        @Operation(summary = "Login a user", description = "Login a user with the given email or username and password", responses = {
+                        @ApiResponse(responseCode = "200", description = "User logged in successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+                        @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericApiResponse.class)))
+        })
+        @PostMapping("/login")
+        public ResponseEntity<GenericApiResponse<LoginResponse>> loginUser(@Valid @RequestBody LoginRequest request) {
+                LoginResponse loginResponse = authService.login(request);
 
-        return ResponseEntity.ok(
-                new GenericApiResponse<>("User logged in successfully", loginResponse));
-    }
+                return ResponseEntity.ok(
+                                new GenericApiResponse<>("User logged in successfully", loginResponse));
+        }
+
+        @Operation(summary = "Get currently authenticated user", description = "Returns the user information from the provided JWT token", security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth"), responses = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(schema = @Schema(implementation = UserJwt.class))),
+                        @ApiResponse(responseCode = "401", description = "Invalid or missing JWT token", content = @Content(schema = @Schema()))
+        })
+        @GetMapping("/me")
+        public ResponseEntity<GenericApiResponse<UserJwt>> getCurrentUser(@AuthenticationPrincipal UserJwt user) {
+
+                return ResponseEntity.ok(new GenericApiResponse<>("User retrieved successfully", user));
+        }
 
 }
