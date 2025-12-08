@@ -8,5 +8,20 @@
     "name": "jwt.expiration",
     "type": "java.lang.String",
     "description": "A description for 'jwt.expiration'"
+  },
+  {
+    "name": "hedera.operator.account-id",
+    "type": "java.lang.String",
+    "description": "A description for 'hedera.operator.account-id'"
+  },
+  {
+    "name": "hedera.operator.private-key",
+    "type": "java.lang.String",
+    "description": "A description for 'hedera.operator.private-key'"
+  },
+  {
+    "name": "hedera.network",
+    "type": "java.lang.String",
+    "description": "A description for 'hedera.network'"
   }
 ]}

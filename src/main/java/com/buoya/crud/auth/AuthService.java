@@ -14,16 +14,8 @@ import com.buoya.crud.common.exceptions.EmailAlreadyExistsException;
 import com.buoya.crud.common.exceptions.InvalidCredentialsException;
 import com.buoya.crud.common.exceptions.UsernameAlreadyExistsException;
 import com.buoya.crud.common.services.JwtService;
-import com.buoya.crud.common.types.UserJwt;
 import com.buoya.crud.entities.User;
 import com.buoya.crud.repository.UserRepository;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.models.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthService {
@@ -45,6 +37,9 @@ public class AuthService {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new UsernameAlreadyExistsException(dto.getUsername());
         }
+
+        // Generate a new Hedera account
+        
 
         User user = User.builder()
                 .username(dto.getUsername())

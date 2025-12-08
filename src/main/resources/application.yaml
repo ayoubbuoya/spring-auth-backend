@@ -12,3 +12,8 @@ spring:
 jwt:
   secret: your-super-secret-key-that-is-long-enough
   expiration: 60000 # 1 minute
+hedera:
+  operator:
+    account-id: ${HEDERA_OPERATOR_ACCOUNT_ID}
+    private-key: ${HEDERA_OPERATOR_PRIVATE_KEY}
+  network: ${HEDERA_NETWORK}
